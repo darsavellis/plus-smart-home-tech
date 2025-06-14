@@ -1,6 +1,5 @@
 package ru.practicum.kafka.model.hub.impl;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +16,6 @@ public class DeviceAddedEvent extends HubEvent {
     @NotBlank
     String id;
     @NotBlank
-    @JsonProperty("type")
     DeviceType deviceType;
 
     @Override

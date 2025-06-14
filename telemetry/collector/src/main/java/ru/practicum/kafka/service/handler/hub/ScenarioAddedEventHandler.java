@@ -1,5 +1,8 @@
 package ru.practicum.kafka.service.handler.hub;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import org.springframework.stereotype.Component;
 import ru.practicum.kafka.config.KafkaClient;
 import ru.practicum.kafka.config.KafkaProducerConfig;
 import ru.practicum.kafka.model.hub.HubEvent;
@@ -9,6 +12,8 @@ import ru.yandex.practicum.kafka.telemetry.event.*;
 
 import java.util.List;
 
+@Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAddedEventAvro> {
     public ScenarioAddedEventHandler(KafkaClient kafkaClient, KafkaProducerConfig kafkaProducerConfig) {
         super(kafkaClient, kafkaProducerConfig);
@@ -22,7 +27,7 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
             .map(scenarioCondition -> ScenarioConditionAvro.newBuilder()
                 .setSensorId(scenarioCondition.getSensorId())
                 .setValue(scenarioCondition.getValue())
-                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getConditionOperationType().toString()))
+                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getOperation().toString()))
                 .setType(ConditionTypeAvro.valueOf(scenarioCondition.getType().toString()))
                 .build()).toList();
 

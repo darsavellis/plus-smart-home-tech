@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.kafka.model.hub.ConditionOperationType;
+import ru.practicum.kafka.model.hub.ConditionOperation;
 import ru.practicum.kafka.model.hub.ConditionType;
 
 @Setter
@@ -13,6 +13,6 @@ import ru.practicum.kafka.model.hub.ConditionType;
 public class ScenarioCondition {
     String sensorId;
     ConditionType type;
-    ConditionOperationType conditionOperationType;
+    ConditionOperation operation;
     int value;
 }

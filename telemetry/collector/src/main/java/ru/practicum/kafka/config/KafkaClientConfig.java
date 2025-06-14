@@ -7,7 +7,6 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 import java.util.Objects;
 
@@ -17,7 +16,6 @@ public class KafkaClientConfig {
     final KafkaProducerConfig config;
 
     @Bean
-    @Scope("prototype")
     KafkaClient getClient() {
         return new KafkaClient() {
             KafkaProducer<String, SpecificRecordBase> producer;
