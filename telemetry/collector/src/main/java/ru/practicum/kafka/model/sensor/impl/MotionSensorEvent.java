@@ -20,3 +20,4 @@ public class MotionSensorEvent extends SensorEvent {
         return SensorEventType.MOTION_SENSOR_EVENT;
     }
 }
+

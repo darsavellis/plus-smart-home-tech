@@ -1,5 +1,6 @@
 package ru.practicum.kafka.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -39,7 +40,7 @@ public class EventController {
     }
 
     @PostMapping("/sensors")
-    public void collectSensorEvents(@RequestBody SensorEvent sensorEvent) {
+    public void collectSensorEvents(@RequestBody @Valid SensorEvent sensorEvent) {
         log.info("Received sensor event: id={}, type={}", sensorEvent.getId(), sensorEvent.getType());
         log.debug("Full sensor event details: {}", sensorEvent);
 
@@ -54,7 +55,7 @@ public class EventController {
     }
 
     @PostMapping("/hubs")
-    public void collectHubEvents(@RequestBody HubEvent hubEvent) {
+    public void collectHubEvents(@RequestBody @Valid HubEvent hubEvent) {
         log.info("Received hub event: hubId={}, type={}", hubEvent.getHubId(), hubEvent.getType());
         log.debug("Full hub event details: {}", hubEvent);
 

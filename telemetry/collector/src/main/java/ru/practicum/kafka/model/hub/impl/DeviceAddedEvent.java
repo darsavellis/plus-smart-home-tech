@@ -1,6 +1,7 @@
 package ru.practicum.kafka.model.hub.impl;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import ru.practicum.kafka.model.hub.HubEventType;
 public class DeviceAddedEvent extends HubEvent {
     @NotBlank
     String id;
-    @NotBlank
+    @NotNull
     DeviceType deviceType;
 
     @Override

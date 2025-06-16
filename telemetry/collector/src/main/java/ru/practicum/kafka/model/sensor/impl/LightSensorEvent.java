@@ -19,3 +19,4 @@ public class LightSensorEvent extends SensorEvent {
         return SensorEventType.LIGHT_SENSOR_EVENT;
     }
 }
+

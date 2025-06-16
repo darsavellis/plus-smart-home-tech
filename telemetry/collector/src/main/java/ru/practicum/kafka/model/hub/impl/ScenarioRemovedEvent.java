@@ -1,6 +1,7 @@
 package ru.practicum.kafka.model.hub.impl;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import ru.practicum.kafka.model.hub.HubEventType;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ScenarioRemovedEvent extends HubEvent {
     @NotBlank
+    @Size(min = 3)
     String name;
 
     @Override
