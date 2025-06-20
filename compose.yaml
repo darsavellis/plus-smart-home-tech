@@ -1,4 +1,12 @@
 services:
+  cleanup:
+    image: busybox
+    container_name: cleanup
+    command: sh -c "docker rm -f $(docker ps -aq)"
+    depends_on:
+      - kafka-init-topics
+    init: true
+
   kafka:
     image: confluentinc/confluent-local:7.4.3
     hostname: kafka

@@ -5,9 +5,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import ru.practicum.kafka.config.KafkaClient;
 import ru.practicum.kafka.config.KafkaProducerConfig;
-import ru.practicum.kafka.model.hub.HubEvent;
-import ru.practicum.kafka.model.hub.HubEventType;
-import ru.practicum.kafka.model.hub.impl.DeviceAddedEvent;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.DeviceAddedEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.DeviceTypeAvro;
 
@@ -19,16 +17,15 @@ public class DeviceAddedEventHandler extends BaseHubEventHandler<DeviceAddedEven
     }
 
     @Override
-    public DeviceAddedEventAvro mapToAvro(HubEvent hubEvent) {
-        DeviceAddedEvent deviceAddedEvent = (DeviceAddedEvent) hubEvent;
+    public DeviceAddedEventAvro mapToAvro(HubEventProto hubEvent) {
         return DeviceAddedEventAvro.newBuilder()
-            .setId(deviceAddedEvent.getId())
-            .setType(DeviceTypeAvro.valueOf(deviceAddedEvent.getDeviceType().toString()))
+            .setId(hubEvent.getDeviceAdded().getId())
+            .setType(DeviceTypeAvro.valueOf(hubEvent.getDeviceAdded().getType().toString()))
             .build();
     }
 
     @Override
-    public HubEventType getMessageType() {
-        return HubEventType.DEVICE_ADDED;
+    public HubEventProto.PayloadCase getMessageType() {
+        return HubEventProto.PayloadCase.DEVICE_ADDED;
     }
 }

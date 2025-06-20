@@ -5,9 +5,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import ru.practicum.kafka.config.KafkaClient;
 import ru.practicum.kafka.config.KafkaProducerConfig;
-import ru.practicum.kafka.model.sensor.SensorEvent;
-import ru.practicum.kafka.model.sensor.SensorEventType;
-import ru.practicum.kafka.model.sensor.impl.MotionSensorEvent;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.MotionSensorAvro;
 
 @Component
@@ -18,18 +16,16 @@ public class MotionSensorEventHandler extends BaseSensorEventHandler<MotionSenso
     }
 
     @Override
-    public MotionSensorAvro mapToAvro(SensorEvent sensorEvent) {
-        MotionSensorEvent motionSensorEvent = (MotionSensorEvent) sensorEvent;
-
+    public MotionSensorAvro mapToAvro(SensorEventProto sensorEvent) {
         return MotionSensorAvro.newBuilder()
-            .setMotion(motionSensorEvent.isMotion())
-            .setLinkQuality(motionSensorEvent.getLinkQuality())
-            .setVoltage(motionSensorEvent.getVoltage())
+            .setMotion(sensorEvent.getMotionSensorEvent().getMotion())
+            .setLinkQuality(sensorEvent.getMotionSensorEvent().getLinkQuality())
+            .setVoltage(sensorEvent.getMotionSensorEvent().getVoltage())
             .build();
     }
 
     @Override
-    public SensorEventType getMessageType() {
-        return SensorEventType.MOTION_SENSOR_EVENT;
+    public SensorEventProto.PayloadCase getMessageType() {
+        return SensorEventProto.PayloadCase.MOTION_SENSOR_EVENT;
     }
 }

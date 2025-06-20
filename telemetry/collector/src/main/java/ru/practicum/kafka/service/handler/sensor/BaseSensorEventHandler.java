@@ -10,10 +10,11 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.stereotype.Component;
 import ru.practicum.kafka.config.KafkaClient;
 import ru.practicum.kafka.config.KafkaProducerConfig;
-import ru.practicum.kafka.model.sensor.SensorEvent;
 import ru.practicum.kafka.service.handler.SensorEventHandler;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
+import java.time.Instant;
 import java.util.concurrent.Future;
 
 @Slf4j
@@ -24,24 +25,30 @@ public abstract class BaseSensorEventHandler<T extends SpecificRecordBase> imple
     final KafkaClient kafkaClient;
     final KafkaProducerConfig kafkaProducerConfig;
 
-    public abstract T mapToAvro(SensorEvent sensorEvent);
+    public abstract T mapToAvro(SensorEventProto sensorEvent);
 
     @Override
-    public void handle(SensorEvent sensorEvent) {
+    public void handle(SensorEventProto sensorEvent) {
         log.debug("Processing sensor event: id={}, type={}", sensorEvent.getId(), getMessageType());
 
-        if (!sensorEvent.getType().equals(getMessageType())) {
-            log.error("Incorrect sensor event type: expected={}, actual={}", getMessageType(), sensorEvent.getType());
+        if (!sensorEvent.getPayloadCase().equals(getMessageType())) {
+            log.error("Incorrect sensor event type: expected={}, actual={}", getMessageType(), sensorEvent.getPayloadCase());
             throw new IllegalArgumentException(
-                String.format("Expected %s but got %s", getMessageType(), sensorEvent.getType()));
+                String.format("Expected %s but got %s", getMessageType(), sensorEvent.getPayloadCase()));
         }
 
         log.debug("Mapping sensor event to Avro format: id={}", sensorEvent.getId());
         T event = mapToAvro(sensorEvent);
+
+        Instant timestamp = Instant.ofEpochSecond(
+            sensorEvent.getTimestamp().getSeconds(),
+            sensorEvent.getTimestamp().getNanos()
+        );
+
         SensorEventAvro sensorEventAvro = SensorEventAvro.newBuilder()
             .setId(sensorEvent.getId())
             .setHubId(sensorEvent.getHubId())
-            .setTimestamp(sensorEvent.getTimestamp())
+            .setTimestamp(timestamp)
             .setPayload(event)
             .build();
 
@@ -51,7 +58,7 @@ public abstract class BaseSensorEventHandler<T extends SpecificRecordBase> imple
         Future<RecordMetadata> future = kafkaClient.getProducer().send(new ProducerRecord<>(
             topicName,
             null,
-            sensorEvent.getTimestamp().toEpochMilli(),
+            timestamp.toEpochMilli(),
             sensorEventAvro.getHubId(),
             sensorEventAvro));
     }
