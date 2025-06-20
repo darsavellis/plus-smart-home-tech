@@ -10,10 +10,11 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.stereotype.Component;
 import ru.practicum.kafka.config.KafkaClient;
 import ru.practicum.kafka.config.KafkaProducerConfig;
-import ru.practicum.kafka.model.hub.HubEvent;
 import ru.practicum.kafka.service.handler.HubEventHandler;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 
+import java.time.Instant;
 import java.util.concurrent.Future;
 
 @Slf4j
@@ -24,24 +25,29 @@ public abstract class BaseHubEventHandler<T extends SpecificRecordBase> implemen
     final KafkaClient kafkaClient;
     final KafkaProducerConfig kafkaProducerConfig;
 
-    public abstract T mapToAvro(HubEvent hubEvent);
+    public abstract T mapToAvro(HubEventProto hubEvent);
 
     @Override
-    public void handle(HubEvent hubEvent) {
+    public void handle(HubEventProto hubEvent) {
         log.debug("Processing hub event: hubId={}, type={}", hubEvent.getHubId(), getMessageType());
 
-        if (!hubEvent.getType().equals(getMessageType())) {
-            log.error("Incorrect hub event type: expected={}, actual={}", getMessageType(), hubEvent.getType());
+        if (!hubEvent.getPayloadCase().equals(getMessageType())) {
+            log.error("Incorrect hub event type: expected={}, actual={}", getMessageType(), hubEvent.getPayloadCase());
             throw new IllegalArgumentException(
-                String.format("Expected %s but got %s", getMessageType(), hubEvent.getType()));
+                String.format("Expected %s but got %s", getMessageType(), hubEvent.getPayloadCase()));
         }
 
         log.debug("Mapping hub event to Avro format: hubId={}", hubEvent.getHubId());
         T event = mapToAvro(hubEvent);
 
+        Instant timestamp = Instant.ofEpochSecond(
+            hubEvent.getTimestamp().getSeconds(),
+            hubEvent.getTimestamp().getNanos()
+        );
+
         HubEventAvro hubEventAvro = HubEventAvro.newBuilder()
             .setHubId(hubEvent.getHubId())
-            .setTimestamp(hubEvent.getTimestamp())
+            .setTimestamp(timestamp)
             .setPayload(event)
             .build();
 
@@ -51,7 +57,7 @@ public abstract class BaseHubEventHandler<T extends SpecificRecordBase> implemen
         Future<RecordMetadata> future = kafkaClient.getProducer().send(new ProducerRecord<>(
             topicName,
             null,
-            hubEvent.getTimestamp().toEpochMilli(),
+            timestamp.toEpochMilli(),
             hubEventAvro.getHubId(),
             hubEventAvro));
     }

@@ -1,10 +1,9 @@
 package ru.practicum.kafka.service.handler;
 
-import ru.practicum.kafka.model.hub.HubEvent;
-import ru.practicum.kafka.model.hub.HubEventType;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 
 public interface HubEventHandler {
-    HubEventType getMessageType();
+    HubEventProto.PayloadCase getMessageType();
 
-    void handle(HubEvent hubEvent);
+    void handle(HubEventProto hubEvent);
 }

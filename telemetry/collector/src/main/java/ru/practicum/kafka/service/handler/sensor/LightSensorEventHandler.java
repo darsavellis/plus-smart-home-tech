@@ -5,9 +5,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import ru.practicum.kafka.config.KafkaClient;
 import ru.practicum.kafka.config.KafkaProducerConfig;
-import ru.practicum.kafka.model.sensor.SensorEvent;
-import ru.practicum.kafka.model.sensor.SensorEventType;
-import ru.practicum.kafka.model.sensor.impl.LightSensorEvent;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.LightSensorAvro;
 
 @Component
@@ -17,17 +15,15 @@ public class LightSensorEventHandler extends BaseSensorEventHandler<LightSensorA
         super(kafkaClient, kafkaProducerConfig);
     }
 
-    public LightSensorAvro mapToAvro(SensorEvent sensorEvent) {
-        LightSensorEvent lightSensorEvent = (LightSensorEvent) sensorEvent;
-
+    public LightSensorAvro mapToAvro(SensorEventProto sensorEvent) {
         return LightSensorAvro.newBuilder()
-            .setLinkQuality(lightSensorEvent.getLinkQuality())
-            .setLuminosity(lightSensorEvent.getLuminosity())
+            .setLinkQuality(sensorEvent.getLightSensorEvent().getLinkQuality())
+            .setLuminosity(sensorEvent.getLightSensorEvent().getLuminosity())
             .build();
     }
 
     @Override
-    public SensorEventType getMessageType() {
-        return SensorEventType.LIGHT_SENSOR_EVENT;
+    public SensorEventProto.PayloadCase getMessageType() {
+        return SensorEventProto.PayloadCase.LIGHT_SENSOR_EVENT;
     }
 }

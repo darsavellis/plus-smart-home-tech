@@ -5,9 +5,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import ru.practicum.kafka.config.KafkaClient;
 import ru.practicum.kafka.config.KafkaProducerConfig;
-import ru.practicum.kafka.model.sensor.SensorEvent;
-import ru.practicum.kafka.model.sensor.SensorEventType;
-import ru.practicum.kafka.model.sensor.impl.SwitchSensorEvent;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.SwitchSensorAvro;
 
 @Component
@@ -18,16 +16,14 @@ public class SwitchSensorEventHandler extends BaseSensorEventHandler<SwitchSenso
     }
 
     @Override
-    public SwitchSensorAvro mapToAvro(SensorEvent sensorEvent) {
-        SwitchSensorEvent switchSensorEvent = (SwitchSensorEvent) sensorEvent;
-
+    public SwitchSensorAvro mapToAvro(SensorEventProto sensorEvent) {
         return SwitchSensorAvro.newBuilder()
-            .setState(switchSensorEvent.isState())
+            .setState(sensorEvent.getSwitchSensorEvent().getState())
             .build();
     }
 
     @Override
-    public SensorEventType getMessageType() {
-        return SensorEventType.SWITCH_SENSOR_EVENT;
+    public SensorEventProto.PayloadCase getMessageType() {
+        return SensorEventProto.PayloadCase.SWITCH_SENSOR_EVENT;
     }
 }

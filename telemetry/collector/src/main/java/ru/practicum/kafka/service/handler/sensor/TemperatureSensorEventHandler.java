@@ -5,9 +5,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import ru.practicum.kafka.config.KafkaClient;
 import ru.practicum.kafka.config.KafkaProducerConfig;
-import ru.practicum.kafka.model.sensor.SensorEvent;
-import ru.practicum.kafka.model.sensor.SensorEventType;
-import ru.practicum.kafka.model.sensor.impl.TemperatureSensorEvent;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.TemperatureSensorAvro;
 
 @Component
@@ -18,16 +16,15 @@ public class TemperatureSensorEventHandler extends BaseSensorEventHandler<Temper
     }
 
     @Override
-    public TemperatureSensorAvro mapToAvro(SensorEvent sensorEvent) {
-        TemperatureSensorEvent temperatureSensorEvent = (TemperatureSensorEvent) sensorEvent;
+    public TemperatureSensorAvro mapToAvro(SensorEventProto sensorEvent) {
         return TemperatureSensorAvro.newBuilder()
-            .setTemperatureC(temperatureSensorEvent.getTemperatureC())
-            .setTemperatureF(temperatureSensorEvent.getTemperatureF())
+            .setTemperatureC(sensorEvent.getTemperatureSensorEvent().getTemperatureC())
+            .setTemperatureF(sensorEvent.getTemperatureSensorEvent().getTemperatureF())
             .build();
     }
 
     @Override
-    public SensorEventType getMessageType() {
-        return SensorEventType.TEMPERATURE_SENSOR_EVENT;
+    public SensorEventProto.PayloadCase getMessageType() {
+        return SensorEventProto.PayloadCase.TEMPERATURE_SENSOR_EVENT;
     }
 }
