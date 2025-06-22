@@ -5,8 +5,8 @@ spring:
 
 logging:
   level:
-    ru.yandex.practicum.telemetry: TRACE
-    ru.practicum.kafka: TRACE
+    ru.yandex.practicum.telemetry.collector: TRACE
+    ru.yandex.practicum.kafka: TRACE
     org:
       springframework: ERROR
       apache.kafka: WARN
