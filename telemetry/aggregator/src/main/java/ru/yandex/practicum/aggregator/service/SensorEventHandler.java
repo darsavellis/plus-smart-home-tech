@@ -45,9 +45,9 @@ public class SensorEventHandler {
             sensorsSnapshotAvro.ifPresent(sensorSnapshotAvro -> sendMessage(sensorSnapshotAvro, sensorEventAvro));
         } catch (ClassCastException e) {
             log.error("Received message of unexpected type: {}", record.value().getClass(), e);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             log.error("Error processing record for hubId: {}, key: {}",
-                record.key(), record.value(), e);
+                record.key(), record.value(), exception);
         }
     }
 

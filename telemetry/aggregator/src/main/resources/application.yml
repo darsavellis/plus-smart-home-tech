@@ -7,7 +7,7 @@ logging:
     ru.yandex.practicum.telemetry.aggregator: TRACE
     ru.yandex.practicum.kafka: TRACE
     org:
-      springframework: ERROR
+      springframework: INFO
       apache.kafka: WARN
 
 aggregator:
@@ -25,7 +25,7 @@ aggregator:
         bootstrap.servers: localhost:9092
         group.id: "aggregator-consumer-group"
         key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-        value.deserializer: ru.yandex.practicum.kafka.serializer.SensorEventDeserializer
+        value.deserializer: ru.yandex.practicum.kafka.deserializer.SensorEventDeserializer
         max.poll.records: 500
         fetch.min.bytes: 1
         fetch.max.wait.ms: 500

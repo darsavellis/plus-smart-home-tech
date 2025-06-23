@@ -58,9 +58,9 @@ public class EventController extends CollectorControllerGrpc.CollectorController
             log.info("Successfully handled collectHubEvent request");
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
-        } catch (Exception e) {
-            log.error("Error handling collectHubEvent request", e);
-            responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
+        } catch (Exception exception) {
+            log.error("Error handling collectHubEvent request", exception);
+            responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(exception)));
         }
     }
 }

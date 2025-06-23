@@ -53,14 +53,14 @@ public class AggregatorRunner implements CommandLineRunner {
             }
         } catch (WakeupException e) {
             log.info("Consumer shutdown initiated");
-        } catch (Exception e) {
-            log.error("Fatal error in consumer loop", e);
+        } catch (Exception exception) {
+            log.error("Fatal error in consumer loop", exception);
         } finally {
             try {
                 consumerClient.stopConsumer();
                 log.info("Kafka client stopped successfully");
-            } catch (Exception e) {
-                log.error("Error stopping Kafka client", e);
+            } catch (Exception exception) {
+                log.error("Error stopping Kafka client", exception);
             }
         }
     }
