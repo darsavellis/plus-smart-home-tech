@@ -1,8 +1,16 @@
 services:
+  cleanup:
+    image: busybox
+    container_name: cleanup
+    command: sh -c "docker rm -f $(docker ps -aq)"
+    init: true
+
   kafka:
     image: confluentinc/confluent-local:7.4.3
     hostname: kafka
     container_name: kafka
+    depends_on:
+      - cleanup
     ports:
       - "9092:9092" # for client connections
       - "9101:9101" # JMX

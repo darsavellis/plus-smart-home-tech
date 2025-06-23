@@ -5,10 +5,10 @@ spring:
 
 logging:
   level:
-    ru.yandex.practicum.telemetry: TRACE
-    ru.practicum.kafka: INFO
+    ru.yandex.practicum.telemetry.collector: TRACE
+    ru.yandex.practicum.kafka: TRACE
     org:
-      springframework: ERROR
+      springframework: INFO
       apache.kafka: WARN
 
 collector:
@@ -22,3 +22,7 @@ collector:
       topics:
         sensors-events: telemetry.sensors.v1
         hubs-events: telemetry.hubs.v1
+
+grpc:
+  server:
+    port: 59091
