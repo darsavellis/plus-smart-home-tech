@@ -1,0 +1,45 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AggregatorApplication<aggregator>",
+            "request": "launch",
+                        "cwd": "${workspaceFolder}",
+            "mainClass": "ru.yandex.practicum.aggregator.AggregatorApplication",
+            "projectName": "aggregator",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AnalyzerApplication<analyzer>",
+            "request": "launch",
+                        "cwd": "${workspaceFolder}",
+            "mainClass": "ru.yandex.practicum.analyzer.AnalyzerApplication",
+            "projectName": "analyzer",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-CollectorApplication<collector>",
+            "request": "launch",
+                        "cwd": "${workspaceFolder}",
+            "mainClass": "ru.yandex.practicum.collector.CollectorApplication",
+            "projectName": "collector",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Spring Boot All Services",
+            "preLaunchTask": "docker-compose up",
+            "configurations": [
+                "Spring Boot-AggregatorApplication<aggregator>",
+                "Spring Boot-AnalyzerApplication<analyzer>",
+                "Spring Boot-CollectorApplication<collector>"
+            ]
+        }
+    ]
+}
