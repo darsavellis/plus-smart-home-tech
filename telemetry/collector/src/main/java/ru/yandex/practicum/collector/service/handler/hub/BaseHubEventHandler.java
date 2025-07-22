@@ -34,31 +34,31 @@ public abstract class BaseHubEventHandler<T extends SpecificRecordBase> implemen
         if (!hubEvent.getPayloadCase().equals(getMessageType())) {
             log.error("Incorrect hub event type: expected={}, actual={}", getMessageType(), hubEvent.getPayloadCase());
             throw new IllegalArgumentException(
-                String.format("Expected %s but got %s", getMessageType(), hubEvent.getPayloadCase()));
+                    String.format("Expected %s but got %s", getMessageType(), hubEvent.getPayloadCase()));
         }
 
         log.debug("Mapping hub event to Avro format: hubId={}", hubEvent.getHubId());
         T event = mapToAvro(hubEvent);
 
         Instant timestamp = Instant.ofEpochSecond(
-            hubEvent.getTimestamp().getSeconds(),
-            hubEvent.getTimestamp().getNanos()
+                hubEvent.getTimestamp().getSeconds(),
+                hubEvent.getTimestamp().getNanos()
         );
 
         HubEventAvro hubEventAvro = HubEventAvro.newBuilder()
-            .setHubId(hubEvent.getHubId())
-            .setTimestamp(timestamp)
-            .setPayload(event)
-            .build();
+                .setHubId(hubEvent.getHubId())
+                .setTimestamp(timestamp)
+                .setPayload(event)
+                .build();
 
         String topicName = kafkaProducerConfig.getTopics().get("hubs-events");
         log.debug("Sending hub event to Kafka topic {}: hubId={}", topicName, hubEvent.getHubId());
 
         Future<RecordMetadata> future = kafkaClient.getProducer().send(new ProducerRecord<>(
-            topicName,
-            null,
-            timestamp.toEpochMilli(),
-            hubEventAvro.getHubId(),
-            hubEventAvro));
+                topicName,
+                null,
+                timestamp.toEpochMilli(),
+                hubEventAvro.getHubId(),
+                hubEventAvro));
     }
 }

@@ -62,9 +62,9 @@ public class SnapshotProcessor implements Processor<SensorsSnapshotAvro> {
         log.info("Starting to process batch of {} records", consumerRecords.count());
         for (ConsumerRecord<String, SensorsSnapshotAvro> record : consumerRecords) {
             log.info("Processing snapshot with key: {}, value: {}, partition: {}, offset: {}",
-                record.key(), record.value(), record.partition(), record.offset());
+                    record.key(), record.value(), record.partition(), record.offset());
             log.info("Processing record: topic={}, partition={}, offset={}, key={}, timestamp={}",
-                record.topic(), record.partition(), record.offset(), record.key(), record.timestamp());
+                    record.topic(), record.partition(), record.offset(), record.key(), record.timestamp());
             manageOffsets(record, count++);
             processRecord(record.value());
         }
@@ -89,8 +89,8 @@ public class SnapshotProcessor implements Processor<SensorsSnapshotAvro> {
 
     void manageOffsets(ConsumerRecord<?, ?> record, int count) {
         currentOffsets.put(
-            new TopicPartition(record.topic(), record.partition()),
-            new OffsetAndMetadata(record.offset() + 1)
+                new TopicPartition(record.topic(), record.partition()),
+                new OffsetAndMetadata(record.offset() + 1)
         );
 
         if (count % consumerConfig.getCommitInterval() == 0) {
