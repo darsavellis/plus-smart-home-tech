@@ -25,9 +25,9 @@ public class EventController extends CollectorControllerGrpc.CollectorController
 
     public EventController(Set<SensorEventHandler> sensorEventHandlers, Set<HubEventHandler> hubEventHandlers) {
         this.sensorEventHandlers = sensorEventHandlers.stream()
-            .collect(Collectors.toMap(SensorEventHandler::getMessageType, Function.identity()));
+                .collect(Collectors.toMap(SensorEventHandler::getMessageType, Function.identity()));
         this.hubEventHandlers = hubEventHandlers.stream()
-            .collect(Collectors.toMap(HubEventHandler::getMessageType, Function.identity()));
+                .collect(Collectors.toMap(HubEventHandler::getMessageType, Function.identity()));
     }
 
     @Override

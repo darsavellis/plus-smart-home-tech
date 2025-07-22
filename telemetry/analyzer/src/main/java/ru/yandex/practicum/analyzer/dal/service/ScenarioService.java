@@ -50,11 +50,11 @@ public class ScenarioService {
     Set<String> collectSensorIds(ScenarioAddedEventAvro event) {
         Set<String> sensors = new HashSet<>();
         event.getConditions().stream()
-            .map(ScenarioConditionAvro::getSensorId)
-            .forEach(sensors::add);
+                .map(ScenarioConditionAvro::getSensorId)
+                .forEach(sensors::add);
         event.getActions().stream()
-            .map(DeviceActionAvro::getSensorId)
-            .forEach(sensors::add);
+                .map(DeviceActionAvro::getSensorId)
+                .forEach(sensors::add);
         return sensors;
     }
 
@@ -66,13 +66,13 @@ public class ScenarioService {
 
     Scenario getOrCreateScenario(String hubId, String name) {
         return scenarioRepository.findByHubIdAndName(hubId, name)
-            .orElseGet(() -> Scenario.builder()
-                .name(name)
-                .hubId(hubId)
-                .conditions(new HashMap<>())
-                .actions(new HashMap<>())
-                .build()
-            );
+                .orElseGet(() -> Scenario.builder()
+                        .name(name)
+                        .hubId(hubId)
+                        .conditions(new HashMap<>())
+                        .actions(new HashMap<>())
+                        .build()
+                );
     }
 
     void clearExistingScenarioData(Scenario scenario) {
@@ -89,10 +89,10 @@ public class ScenarioService {
     void updateScenarioConditions(Scenario scenario, List<ScenarioConditionAvro> eventConditions) {
         for (ScenarioConditionAvro eventCondition : eventConditions) {
             Condition condition = Condition.builder()
-                .type(eventCondition.getType())
-                .operation(ConditionOperation.from(eventCondition.getOperation()))
-                .value(mapValue(eventCondition.getValue()))
-                .build();
+                    .type(eventCondition.getType())
+                    .operation(ConditionOperation.from(eventCondition.getOperation()))
+                    .value(mapValue(eventCondition.getValue()))
+                    .build();
             scenario.addCondition(eventCondition.getSensorId(), condition);
         }
     }
@@ -100,9 +100,9 @@ public class ScenarioService {
     void updateScenarioActions(Scenario scenario, List<DeviceActionAvro> eventActions) {
         for (DeviceActionAvro eventAction : eventActions) {
             Action action = Action.builder()
-                .type(eventAction.getType())
-                .value(eventAction.getType().equals(ActionTypeAvro.SET_VALUE) ? mapValue(eventAction.getValue()) : null)
-                .build();
+                    .type(eventAction.getType())
+                    .value(eventAction.getType().equals(ActionTypeAvro.SET_VALUE) ? mapValue(eventAction.getValue()) : null)
+                    .build();
             scenario.addAction(eventAction.getSensorId(), action);
         }
     }
@@ -131,7 +131,7 @@ public class ScenarioService {
     @Transactional(readOnly = true)
     public Scenario findByHubIdAndName(String hubId, String name) {
         return scenarioRepository.findByHubIdAndName(hubId, name)
-            .orElseThrow(() -> new ScenarioNotFoundException(name, hubId));
+                .orElseThrow(() -> new ScenarioNotFoundException(name, hubId));
     }
 
     @Transactional(readOnly = true)

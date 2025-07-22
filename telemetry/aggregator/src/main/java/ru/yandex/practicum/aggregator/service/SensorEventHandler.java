@@ -39,7 +39,7 @@ public class SensorEventHandler {
             SensorEventAvro sensorEventAvro = (SensorEventAvro) record.value();
 
             log.debug("Processing sensor event: hubId={}, timestamp={}",
-                sensorEventAvro.getHubId(), sensorEventAvro.getTimestamp());
+                    sensorEventAvro.getHubId(), sensorEventAvro.getTimestamp());
 
             Optional<SensorsSnapshotAvro> sensorsSnapshotAvro = updateState(sensorEventAvro);
             sensorsSnapshotAvro.ifPresent(sensorSnapshotAvro -> sendMessage(sensorSnapshotAvro, sensorEventAvro));
@@ -47,27 +47,27 @@ public class SensorEventHandler {
             log.error("Received message of unexpected type: {}", record.value().getClass(), e);
         } catch (Exception exception) {
             log.error("Error processing record for hubId: {}, key: {}",
-                record.key(), record.value(), exception);
+                    record.key(), record.value(), exception);
         }
     }
 
     private void sendMessage(SensorsSnapshotAvro sensorsSnapshotAvro, SensorEventAvro sensorEventAvro) {
         ProducerRecord<String, SpecificRecordBase> producerRecord = new ProducerRecord<>(
-            SNAPSHOTS_EVENTS_TOPIC,
-            null,
-            sensorEventAvro.getTimestamp().toEpochMilli(),
-            sensorEventAvro.getHubId(),
-            sensorsSnapshotAvro
+                SNAPSHOTS_EVENTS_TOPIC,
+                null,
+                sensorEventAvro.getTimestamp().toEpochMilli(),
+                sensorEventAvro.getHubId(),
+                sensorsSnapshotAvro
         );
 
         producer.send(producerRecord, (metadata, exception) -> {
             if (exception != null) {
                 producerClient.stopProducer();
                 log.error("Failed to send snapshot for hubId={} error={} ", sensorEventAvro.getHubId(),
-                    exception.getMessage(), exception);
+                        exception.getMessage(), exception);
             } else {
                 log.debug("Snapshot sent: hubId={}, partition={}, offset={}", sensorEventAvro.getHubId(),
-                    metadata.partition(), metadata.offset());
+                        metadata.partition(), metadata.offset());
             }
         });
     }
@@ -81,10 +81,10 @@ public class SensorEventHandler {
         SensorsSnapshotAvro snapshot = snapshots.computeIfAbsent(hubId, id -> {
             log.debug("Creating new snapshot for hubId={}, timestamp={}", id, sensorEventAvro.getTimestamp());
             return SensorsSnapshotAvro.newBuilder()
-                .setHubId(id)
-                .setTimestamp(sensorEventAvro.getTimestamp())
-                .setSensorState(new HashMap<>())
-                .build();
+                    .setHubId(id)
+                    .setTimestamp(sensorEventAvro.getTimestamp())
+                    .setSensorState(new HashMap<>())
+                    .build();
         });
         SensorStateAvro newState = toSensorState(sensorEventAvro);
 
@@ -102,13 +102,13 @@ public class SensorEventHandler {
 
     private SensorStateAvro toSensorState(SensorEventAvro event) {
         return SensorStateAvro.newBuilder()
-            .setTimestamp(event.getTimestamp())
-            .setData(event.getPayload())
-            .build();
+                .setTimestamp(event.getTimestamp())
+                .setData(event.getPayload())
+                .build();
     }
 
     private boolean isStaleOrUnchanged(SensorStateAvro oldState, SensorStateAvro newState) {
         return oldState != null && (oldState.getTimestamp().isAfter(newState.getTimestamp()) ||
-            oldState.getData().equals(newState.getData()));
+                oldState.getData().equals(newState.getData()));
     }
 }
