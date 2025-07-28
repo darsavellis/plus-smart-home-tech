@@ -1,9 +1,9 @@
-package ru.yandex.practicum.store.mappers;
+package ru.yandex.practicum.store.mapper;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
-import ru.yandex.practicum.dto.ProductDto;
+import ru.yandex.practicum.dto.store.ProductDto;
 import ru.yandex.practicum.store.model.Product;
 
 @UtilityClass

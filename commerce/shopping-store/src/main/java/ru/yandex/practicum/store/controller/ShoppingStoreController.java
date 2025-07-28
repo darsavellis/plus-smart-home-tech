@@ -8,10 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.store.service.ShoppingStoreServiceImpl;
-import ru.yandex.practicum.dto.ProductCategory;
-import ru.yandex.practicum.dto.ProductDto;
-import ru.yandex.practicum.dto.SetProductQuantityStateRequest;
+import ru.yandex.practicum.contract.shopping.store.ShoppingStoreContract;
+import ru.yandex.practicum.dto.store.ProductCategory;
+import ru.yandex.practicum.dto.store.ProductDto;
+import ru.yandex.practicum.dto.store.SetProductQuantityStateRequest;
+import ru.yandex.practicum.store.service.impl.ShoppingStoreServiceImpl;
 
 import java.util.UUID;
 
@@ -20,7 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/shopping-store")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ShoppingStoreController {
+public class ShoppingStoreController implements ShoppingStoreContract {
     final ShoppingStoreServiceImpl shoppingStoreService;
 
     @GetMapping
@@ -32,6 +33,7 @@ public class ShoppingStoreController {
     public ProductDto getProduct(@PathVariable UUID productId) {
         return shoppingStoreService.getProduct(productId);
     }
+
     @PutMapping
     public ProductDto createProduct(@Validated @RequestBody ProductDto productDto) {
         return shoppingStoreService.createProduct(productDto);
@@ -48,7 +50,7 @@ public class ShoppingStoreController {
     }
 
     @PostMapping("/quantityState")
-    public void setQuantityState(@Validated @ModelAttribute  SetProductQuantityStateRequest setProductQuantityStateRequest) {
+    public void setQuantityState(@Validated @ModelAttribute SetProductQuantityStateRequest setProductQuantityStateRequest) {
         shoppingStoreService.setQuantityState(setProductQuantityStateRequest);
     }
 }
