@@ -1,9 +1,9 @@
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: test
+    url: jdbc:postgresql://localhost:6432/store-db
+    username: shopping-store
+    password: shopping-store
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties.hibernate:
@@ -13,6 +13,9 @@ spring:
     hibernate.ddl-auto: update
     show-sql: true
   sql.init.mode: always
+
+server:
+  port: 0
 
 logging:
   level:

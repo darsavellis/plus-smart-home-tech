@@ -5,6 +5,33 @@ services:
     command: sh -c "docker rm -f $(docker ps -aq)"
     init: true
 
+  store-db:
+    container_name: store-db
+    ports:
+      - "6432:5432"
+    environment:
+      - POSTGRES_PASSWORD=shopping-store
+      - POSTGRES_USER=shopping-store
+      - POSTGRES_DB=shopping-store-db
+
+  cart-db:
+    container_name: cart-db
+    ports:
+      - "7432:5432"
+    environment:
+      - POSTGRES_PASSWORD=shopping-cart
+      - POSTGRES_USER=shopping-cart
+      - POSTGRES_DB=shopping-cart-db
+
+  warehouse-db:
+    container_name: warehouse-db
+    ports:
+      - "8432:5432"
+    environment:
+      - POSTGRES_PASSWORD=warehouse
+      - POSTGRES_USER=warehouse
+      - POSTGRES_DB=warehouse-db
+      -
   kafka:
     image: confluentinc/confluent-local:7.4.3
     hostname: kafka

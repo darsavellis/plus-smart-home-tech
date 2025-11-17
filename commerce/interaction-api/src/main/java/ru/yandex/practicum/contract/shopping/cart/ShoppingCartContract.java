@@ -1,5 +1,6 @@
 package ru.yandex.practicum.contract.shopping.cart;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.dto.cart.ChangeProductQuantityRequest;
@@ -19,5 +20,5 @@ public interface ShoppingCartContract {
     ShoppingCartDto removeFromShoppingCart(@RequestParam String username, @RequestBody Set<UUID> uuids);
 
     ShoppingCartDto changeProductQuantity(@RequestParam String username,
-                                          @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest);
+                                          @Validated @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest);
 }
