@@ -1,55 +1,18 @@
 spring:
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: test
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    properties.hibernate:
-      jdbc.time_zone: UTC
-      format_sql: true
-      temp.use_jdbc_metadata_defaults: false
-    hibernate.ddl-auto: none
-    show-sql: false
-  sql.init.mode: always
+  application:
+    name: analyzer
+  config:
+    import: "configserver:"
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        serviceId: config-server
 
-logging:
-  level:
-    ru.yandex.practicum.telemetry.analyzer: TRACE
-    ru.yandex.practicum.kafka: TRACE
-    org:
-      springframework: INFO
-      apache.kafka: WARN
-
-grpc:
+eureka:
+  instance:
+    preferIpAddress: false
+    hostname: ANALYZER
   client:
-    hub-router:
-      address: localhost:59090
-      enableKeepAlive: true
-      keepAliveWithoutCalls: true
-      negotiationType: plaintext
-
-analyzer:
-  kafka:
-    common-properties:
-      bootstrap.servers: localhost:9092
-      key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      enable.auto.commit: false
-    consumers:
-      - type: HubEventProcessor
-        properties:
-          group.id: "snapshot-analyzer-consumer-group"
-          value.deserializer: ru.yandex.practicum.kafka.deserializer.HubEventDeserializer
-        poll-timeout: 500ms
-        commit-interval: 10
-        topics:
-          - telemetry.hubs.v1
-      - type: SnapshotProcessor
-        properties:
-          group.id: "snapshot-analyzer-consumer-group"
-          value.deserializer: ru.yandex.practicum.kafka.deserializer.SnapshotDeserializer
-        poll-timeout: 2000ms
-        commit-interval: 100
-        topics:
-          - telemetry.snapshots.v1
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

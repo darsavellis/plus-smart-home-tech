@@ -14,11 +14,11 @@ cleanup() {
 trap cleanup EXIT
 
 # Директория проекта
-PROJECT_DIR="/Users/sandro/IdeaProjects/plus-smart-home-tech"
+PROJECT_DIR="C:\Users\Ekaterina\IdeaProjects\plus-smart-home-tech"
 
 # Запуск docker compose в фоне
 echo "Запуск docker compose..."
-cd "$PROJECT_DIR" && docker compose up -d
+cd "$PROJECT_DIR" && docker compose up
 
 # Собрать проект (если необходимо)
 echo "Сборка проекта..."

@@ -27,9 +27,9 @@ public class SensorService {
         }
 
         Sensor sensor = Sensor.builder()
-            .hubId(hubId)
-            .id(event.getId())
-            .build();
+                .hubId(hubId)
+                .id(event.getId())
+                .build();
 
         log.debug("New sensor registered in hub [{}]: [{}]", hubId, event.getId());
         sensorRepository.save(sensor);

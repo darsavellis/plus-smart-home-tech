@@ -34,32 +34,32 @@ public abstract class BaseSensorEventHandler<T extends SpecificRecordBase> imple
         if (!sensorEvent.getPayloadCase().equals(getMessageType())) {
             log.error("Incorrect sensor event type: expected={}, actual={}", getMessageType(), sensorEvent.getPayloadCase());
             throw new IllegalArgumentException(
-                String.format("Expected %s but got %s", getMessageType(), sensorEvent.getPayloadCase()));
+                    String.format("Expected %s but got %s", getMessageType(), sensorEvent.getPayloadCase()));
         }
 
         log.debug("Mapping sensor event to Avro format: id={}", sensorEvent.getId());
         T event = mapToAvro(sensorEvent);
 
         Instant timestamp = Instant.ofEpochSecond(
-            sensorEvent.getTimestamp().getSeconds(),
-            sensorEvent.getTimestamp().getNanos()
+                sensorEvent.getTimestamp().getSeconds(),
+                sensorEvent.getTimestamp().getNanos()
         );
 
         SensorEventAvro sensorEventAvro = SensorEventAvro.newBuilder()
-            .setId(sensorEvent.getId())
-            .setHubId(sensorEvent.getHubId())
-            .setTimestamp(timestamp)
-            .setPayload(event)
-            .build();
+                .setId(sensorEvent.getId())
+                .setHubId(sensorEvent.getHubId())
+                .setTimestamp(timestamp)
+                .setPayload(event)
+                .build();
 
         String topicName = kafkaProducerConfig.getTopics().get("sensors-events");
         log.debug("Sending sensor event to Kafka topic {}: id={}, hubId={}", topicName, sensorEvent.getId(), sensorEvent.getHubId());
 
         Future<RecordMetadata> future = kafkaClient.getProducer().send(new ProducerRecord<>(
-            topicName,
-            null,
-            timestamp.toEpochMilli(),
-            sensorEventAvro.getHubId(),
-            sensorEventAvro));
+                topicName,
+                null,
+                timestamp.toEpochMilli(),
+                sensorEventAvro.getHubId(),
+                sensorEventAvro));
     }
 }
