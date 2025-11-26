@@ -1,0 +1,36 @@
+package ru.yandex.practicum.warehouse.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.Map;
+import java.util.UUID;
+
+@Entity
+@Table(name = "order_bookings")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderBooking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+
+    @Column(nullable = false, unique = true)
+    private UUID orderId;
+
+    @ElementCollection
+    @CollectionTable(name = "order_booking_products", joinColumns = @JoinColumn(name = "order_booking_id"))
+    @MapKeyColumn(name = "product_id")
+    @Column(name = "quantity")
+    private Map<UUID, Long> products;
+
+    private Double deliveryWeight;
+    private Double deliveryVolume;
+    private Boolean fragile;
+
+    private UUID deliveryId;
+}
+

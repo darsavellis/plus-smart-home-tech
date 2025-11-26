@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookedProductDto {
+public class BookedProductsDto {
     Double deliveryWeight;
     Double deliveryVolume;
     Boolean fragile;

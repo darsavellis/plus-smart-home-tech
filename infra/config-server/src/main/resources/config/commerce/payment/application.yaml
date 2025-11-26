@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:10432/payment-db
+    username: payment
+    password: payment
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties.hibernate:
+      jdbc.time_zone: UTC
+      format_sql: true
+      temp.use_jdbc_metadata_defaults: false
+    hibernate.ddl-auto: update
+    show-sql: true
+  sql.init.mode: always
+
+server:
+  port: 0
+
+logging:
+  level:
+    org:
+      springframework: INFO
+      apache.kafka: WARN

@@ -3,6 +3,7 @@ package ru.yandex.practicum.cart.controller;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.cart.service.ShoppingCartService;
 import ru.yandex.practicum.contract.shopping.cart.ShoppingCartContract;
@@ -42,7 +43,7 @@ public class ShoppingCartController implements ShoppingCartContract {
 
     @PostMapping("/change-quantity")
     public ShoppingCartDto changeProductQuantity(@RequestParam String username,
-                                                 @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest) {
+                                                 @Validated @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest) {
         return shoppingCartService.changeProductQuantity(username, changeProductQuantityRequest);
     }
 }
