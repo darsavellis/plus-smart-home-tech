@@ -26,7 +26,7 @@ public interface WarehouseContract {
     AddressDto getWarehouseAddress();
 
     @PostMapping("/assembly")
-    BookedProductsDto assemblyProductsForOrder(@Validated@RequestBody AssemblyProductForOrderRequest assemblyProductForOrderRequest);
+    BookedProductsDto assemblyProductsForOrder(@Validated @RequestBody AssemblyProductForOrderRequest assemblyProductForOrderRequest);
 
     @PostMapping("/shipped")
     void shippedToDelivery(@Valid @RequestBody ShippedToDeliveryRequest shippedToDeliveryRequest);

@@ -63,7 +63,7 @@ public class HubEventProcessor implements Processor<HubEventAvro>, Runnable {
     public void processRecords(ConsumerRecords<String, HubEventAvro> consumerRecords) {
         for (ConsumerRecord<String, HubEventAvro> record : consumerRecords) {
             log.info("Processing record with key: {}, value: {}, partition: {}, offset: {}",
-                    record.key(), record.value(), record.partition(), record.offset());
+                record.key(), record.value(), record.partition(), record.offset());
             processRecord(record.value());
         }
     }

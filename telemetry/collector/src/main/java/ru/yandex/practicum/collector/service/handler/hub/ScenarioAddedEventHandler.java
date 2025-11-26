@@ -20,29 +20,29 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
     @Override
     public ScenarioAddedEventAvro mapToAvro(HubEventProto hubEvent) {
         List<ScenarioConditionAvro> scenarioConditionAvroList = hubEvent.getScenarioAdded().getConditionList().stream()
-                .map(scenarioCondition -> ScenarioConditionAvro.newBuilder()
-                        .setSensorId(scenarioCondition.getSensorId())
-                        .setValue(switch (scenarioCondition.getValueCase()) {
-                            case INT_VALUE -> scenarioCondition.getIntValue();
-                            case BOOL_VALUE -> scenarioCondition.getBoolValue();
-                            case VALUE_NOT_SET -> null;
-                        })
-                        .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getOperation().toString()))
-                        .setType(ConditionTypeAvro.valueOf(scenarioCondition.getType().toString()))
-                        .build()).toList();
+            .map(scenarioCondition -> ScenarioConditionAvro.newBuilder()
+                .setSensorId(scenarioCondition.getSensorId())
+                .setValue(switch (scenarioCondition.getValueCase()) {
+                    case INT_VALUE -> scenarioCondition.getIntValue();
+                    case BOOL_VALUE -> scenarioCondition.getBoolValue();
+                    case VALUE_NOT_SET -> null;
+                })
+                .setOperation(ConditionOperationAvro.valueOf(scenarioCondition.getOperation().toString()))
+                .setType(ConditionTypeAvro.valueOf(scenarioCondition.getType().toString()))
+                .build()).toList();
 
         List<DeviceActionAvro> deviceActionAvroList = hubEvent.getScenarioAdded().getActionList().stream()
-                .map(deviceAction -> DeviceActionAvro.newBuilder()
-                        .setSensorId(deviceAction.getSensorId())
-                        .setType(ActionTypeAvro.valueOf(deviceAction.getType().toString()))
-                        .setValue(deviceAction.getValue())
-                        .build()).toList();
+            .map(deviceAction -> DeviceActionAvro.newBuilder()
+                .setSensorId(deviceAction.getSensorId())
+                .setType(ActionTypeAvro.valueOf(deviceAction.getType().toString()))
+                .setValue(deviceAction.getValue())
+                .build()).toList();
 
         return ScenarioAddedEventAvro.newBuilder()
-                .setName(hubEvent.getScenarioAdded().getName())
-                .setActions(deviceActionAvroList)
-                .setConditions(scenarioConditionAvroList)
-                .build();
+            .setName(hubEvent.getScenarioAdded().getName())
+            .setActions(deviceActionAvroList)
+            .setConditions(scenarioConditionAvroList)
+            .build();
     }
 
     @Override

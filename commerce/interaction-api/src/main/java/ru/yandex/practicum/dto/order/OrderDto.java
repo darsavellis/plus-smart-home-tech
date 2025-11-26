@@ -2,15 +2,14 @@ package ru.yandex.practicum.dto.order;
 
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderDto {
@@ -23,7 +22,7 @@ public class OrderDto {
     double deliveryWeight;
     double deliveryVolume;
     boolean fragile;
-    double totalPrice;
-    double deliveryPrice;
-    double productPrice;
+    BigDecimal totalPrice;
+    BigDecimal deliveryPrice;
+    BigDecimal productPrice;
 }

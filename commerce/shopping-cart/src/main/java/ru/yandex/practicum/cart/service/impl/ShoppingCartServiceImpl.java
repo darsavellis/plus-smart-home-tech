@@ -32,10 +32,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public ShoppingCartDto getShoppingCart(String username) {
         log.info("Запрос на получение корзины покупок для пользователя: {}", username);
         ShoppingCart shoppingCart = shoppingCartRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    log.warn("Корзина покупок не найдена для пользователя: {}", username);
-                    return new NotFoundException(String.format(CART_NOT_FOUND_MESSAGE, username));
-                });
+            .orElseThrow(() -> {
+                log.warn("Корзина покупок не найдена для пользователя: {}", username);
+                return new NotFoundException(String.format(CART_NOT_FOUND_MESSAGE, username));
+            });
 
         log.debug("Получена корзина покупок для пользователя {}: {}", username, shoppingCart);
         return ShoppingCartMapper.toShoppingCartDto(shoppingCart);
@@ -58,7 +58,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         products.forEach((productId, quantity) -> {
             Integer currentQuantity = shoppingCart.getProductQuantityMap().get(productId);
             log.debug("Добавление товара в корзину: ID={}, текущее количество={}, добавляемое количество={}",
-                    productId, currentQuantity, quantity);
+                productId, currentQuantity, quantity);
             shoppingCart.getProductQuantityMap().merge(productId, quantity, Integer::sum);
         });
 
@@ -67,7 +67,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         ShoppingCartDto result = ShoppingCartMapper.toShoppingCartDto(shoppingCart);
         log.info("Товары успешно добавлены в корзину пользователя: {}. Итоговое количество товаров: {}",
-                username, result.getProducts().size());
+            username, result.getProducts().size());
         return result;
     }
 
@@ -77,10 +77,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         log.info("Запрос на деактивацию корзины для пользователя: {}", username);
 
         ShoppingCart shoppingCart = shoppingCartRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    log.warn("Невозможно деактивировать корзину. Корзина для пользователя {} не найдена", username);
-                    return new NotFoundException(String.format(CART_NOT_FOUND_MESSAGE, username));
-                });
+            .orElseThrow(() -> {
+                log.warn("Невозможно деактивировать корзину. Корзина для пользователя {} не найдена", username);
+                return new NotFoundException(String.format(CART_NOT_FOUND_MESSAGE, username));
+            });
 
         log.debug("Текущее состояние корзины перед деактивацией: {}", shoppingCart.getCartState());
         shoppingCart.setCartState(CartState.DISABLED);
@@ -96,14 +96,14 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     public ShoppingCartDto removeFromShoppingCart(String username, Set<UUID> uuids) {
         log.info("Запрос на удаление товаров из корзины пользователя: {}. Количество удаляемых товаров: {}",
-                username, uuids.size());
+            username, uuids.size());
         log.debug("Список удаляемых товаров: {}", uuids);
 
         ShoppingCart shoppingCart = shoppingCartRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    log.warn("Невозможно удалить товары. Корзина для пользователя {} не найдена", username);
-                    return new NotFoundException(String.format(CART_NOT_FOUND_MESSAGE, username));
-                });
+            .orElseThrow(() -> {
+                log.warn("Невозможно удалить товары. Корзина для пользователя {} не найдена", username);
+                return new NotFoundException(String.format(CART_NOT_FOUND_MESSAGE, username));
+            });
 
         int initialSize = shoppingCart.getProductQuantityMap().size();
         log.debug("Текущее количество товаров в корзине: {}", initialSize);
@@ -126,20 +126,20 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     public ShoppingCartDto changeProductQuantity(String username, ChangeProductQuantityRequest changeProductQuantityRequest) {
         log.info("Запрос на изменение количества товара в корзине пользователя: {}. ID товара: {}, новое количество: {}",
-                username, changeProductQuantityRequest.getProductId(), changeProductQuantityRequest.getNewQuantity());
+            username, changeProductQuantityRequest.getProductId(), changeProductQuantityRequest.getNewQuantity());
 
         ShoppingCart shoppingCart = shoppingCartRepository.findByUsername(username)
-                .orElseThrow(() -> {
-                    log.warn("Невозможно изменить количество товара. Корзина для пользователя {} не найдена", username);
-                    return new NotFoundException(String.format(CART_NOT_FOUND_MESSAGE, username));
-                });
+            .orElseThrow(() -> {
+                log.warn("Невозможно изменить количество товара. Корзина для пользователя {} не найдена", username);
+                return new NotFoundException(String.format(CART_NOT_FOUND_MESSAGE, username));
+            });
 
         UUID productId = changeProductQuantityRequest.getProductId();
         Integer oldQuantity = shoppingCart.getProductQuantityMap().get(productId);
         Integer newQuantity = changeProductQuantityRequest.getNewQuantity();
 
         log.debug("Изменение количества товара: ID={}, старое количество={}, новое количество={}",
-                productId, oldQuantity, newQuantity);
+            productId, oldQuantity, newQuantity);
 
         shoppingCart.getProductQuantityMap().replace(productId, newQuantity);
         log.debug("Сохранение обновленной корзины в репозиторий");

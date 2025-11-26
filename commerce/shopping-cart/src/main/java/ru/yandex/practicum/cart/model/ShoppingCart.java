@@ -27,7 +27,7 @@ public class ShoppingCart {
 
     @ElementCollection
     @CollectionTable(name = "shopping_cart_product_quantity",
-            joinColumns = {@JoinColumn(name = "shopping_cart_id", referencedColumnName = "shopping_cart_id")})
+        joinColumns = {@JoinColumn(name = "shopping_cart_id", referencedColumnName = "shopping_cart_id")})
     @MapKeyColumn(name = "product_name")
     @Column(name = "quantity")
     Map<UUID, Integer> productQuantityMap;

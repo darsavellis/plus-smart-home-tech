@@ -2,12 +2,10 @@ package ru.yandex.practicum.dto.warehouse;
 
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-@Getter
-@Setter
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DimensionDto {
     @Min(value = 1)

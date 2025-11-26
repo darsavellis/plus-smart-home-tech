@@ -41,7 +41,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         if (productInWarehouseRepository.existsById(newProductInWarehouseRequest.getProductId())) {
             log.warn("Продукт с ID {} уже существует в хранилище", newProductInWarehouseRequest.getProductId());
             throw new SpecifiedProductAlreadyInWarehouseException(
-                    String.format("Продукт с ID %s уже существует в хранилище", newProductInWarehouseRequest.getProductId()));
+                String.format("Продукт с ID %s уже существует в хранилище", newProductInWarehouseRequest.getProductId()));
         }
 
         ProductInWarehouse productInWarehouse = ProductInWarehouseMapper.toProductInWarehouse(newProductInWarehouseRequest);
@@ -65,8 +65,8 @@ public class WarehouseServiceImpl implements WarehouseService {
         log.debug("Получение данных о {} товарах из хранилища", productIds.size());
 
         Map<UUID, ProductInWarehouse> productMap = productInWarehouseRepository.findAllById(productIds)
-                .stream()
-                .collect(Collectors.toMap(ProductInWarehouse::getProductId, Function.identity()));
+            .stream()
+            .collect(Collectors.toMap(ProductInWarehouse::getProductId, Function.identity()));
 
         double totalWeight = 0;
         double totalVolume = 0;
@@ -85,7 +85,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             if (product == null || (product.getQuantity() == null ? 0L : product.getQuantity()) < quantity) {
                 log.warn("Товар {} отсутствует или имеет недостаточное количество на складе", productId);
                 throw new ProductInShoppingCartLowQuantityWarehouse(
-                        String.format("Товар с ID %s отсутствует или имеет недостаточное количество на складе", productId));
+                    String.format("Товар с ID %s отсутствует или имеет недостаточное количество на складе", productId));
             }
 
             if (product.getWeight() != null) {
@@ -110,14 +110,14 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Transactional
     public void addProductToWarehouse(AddProductToWarehouseRequest addProductToWarehouseRequest) {
         log.info("Запрос на добавление продукта на склад. ID продукта: {}, количество: {}",
-                addProductToWarehouseRequest.getProductId(), addProductToWarehouseRequest.getQuantity());
+            addProductToWarehouseRequest.getProductId(), addProductToWarehouseRequest.getQuantity());
 
         ProductInWarehouse product = productInWarehouseRepository.findById(addProductToWarehouseRequest.getProductId())
-                .orElseThrow(() -> {
-                    log.error("Продукт с ID {} не найден в хранилище", addProductToWarehouseRequest.getProductId());
-                    return new SpecifiedProductAlreadyInWarehouseException(
-                            String.format("Продукт с ID %s не найден в хранилище", addProductToWarehouseRequest.getProductId()));
-                });
+            .orElseThrow(() -> {
+                log.error("Продукт с ID {} не найден в хранилище", addProductToWarehouseRequest.getProductId());
+                return new SpecifiedProductAlreadyInWarehouseException(
+                    String.format("Продукт с ID %s не найден в хранилище", addProductToWarehouseRequest.getProductId()));
+            });
 
         long currentQuantity = (product.getQuantity() != null) ? product.getQuantity() : 0L;
         log.debug("Текущее количество продукта: {}", currentQuantity);
@@ -127,19 +127,19 @@ public class WarehouseServiceImpl implements WarehouseService {
 
         productInWarehouseRepository.save(product);
         log.info("Количество продукта с ID {} успешно обновлено. Новое количество: {}",
-                addProductToWarehouseRequest.getProductId(), newQuantity);
+            addProductToWarehouseRequest.getProductId(), newQuantity);
     }
 
     @Override
     public AddressDto getWarehouseAddress() {
         log.info("Получение адреса склада");
         AddressDto addressDto = AddressDto.builder()
-                .country(CURRENT_ADDRESS)
-                .city(CURRENT_ADDRESS)
-                .street(CURRENT_ADDRESS)
-                .house(CURRENT_ADDRESS)
-                .flat(CURRENT_ADDRESS)
-                .build();
+            .country(CURRENT_ADDRESS)
+            .city(CURRENT_ADDRESS)
+            .street(CURRENT_ADDRESS)
+            .house(CURRENT_ADDRESS)
+            .flat(CURRENT_ADDRESS)
+            .build();
         log.debug("Сформирован адрес склада: {}", addressDto);
         return addressDto;
     }
@@ -152,7 +152,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         Map<UUID, Long> products = request.getProducts();
         List<ProductInWarehouse> items = productInWarehouseRepository.findAllById(products.keySet());
         Map<UUID, ProductInWarehouse> itemById = items.stream()
-                .collect(Collectors.toMap(ProductInWarehouse::getProductId, Function.identity()));
+            .collect(Collectors.toMap(ProductInWarehouse::getProductId, Function.identity()));
 
         for (Map.Entry<UUID, Long> e : products.entrySet()) {
             UUID productId = e.getKey();
@@ -160,7 +160,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             ProductInWarehouse pw = itemById.get(productId);
             if (pw == null || (pw.getQuantity() == null ? 0L : pw.getQuantity()) < need) {
                 throw new ProductInShoppingCartLowQuantityWarehouse(
-                        String.format("Товар %s отсутствует или недостаточен на складе", productId));
+                    String.format("Товар %s отсутствует или недостаточен на складе", productId));
             }
         }
         for (Map.Entry<UUID, Long> e : products.entrySet()) {
@@ -187,12 +187,12 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         OrderBooking booking = OrderBooking.builder()
-                .orderId(request.getOrderId())
-                .products(products)
-                .deliveryWeight(deliveryWeight)
-                .deliveryVolume(deliveryVolume)
-                .fragile(fragile)
-                .build();
+            .orderId(request.getOrderId())
+            .products(products)
+            .deliveryWeight(deliveryWeight)
+            .deliveryVolume(deliveryVolume)
+            .fragile(fragile)
+            .build();
         orderBookingRepository.save(booking);
 
         BookedProductsDto dto = new BookedProductsDto();
@@ -207,8 +207,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     public void shippedToDelivery(ShippedToDeliveryRequest request) {
         log.info("Отгрузка на доставку. orderId: {}, deliveryId: {}", request.getOrderId(), request.getDeliveryId());
         OrderBooking booking = orderBookingRepository.findByOrderId(request.getOrderId())
-                .orElseThrow(() -> new IllegalStateException(
-                        String.format("Сборка для заказа %s не найдена", request.getOrderId())));
+            .orElseThrow(() -> new IllegalStateException(
+                String.format("Сборка для заказа %s не найдена", request.getOrderId())));
         booking.setDeliveryId(request.getDeliveryId());
         orderBookingRepository.save(booking);
     }

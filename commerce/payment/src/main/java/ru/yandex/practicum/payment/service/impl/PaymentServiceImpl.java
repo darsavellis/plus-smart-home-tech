@@ -16,6 +16,7 @@ import ru.yandex.practicum.payment.model.PaymentState;
 import ru.yandex.practicum.payment.repository.PaymentRepository;
 import ru.yandex.practicum.payment.service.PaymentService;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,11 +33,13 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDto createPayment(OrderDto orderDto) {
         log.info("Создание платежа для заказа orderId={}, сумма={}, доставка={}",
             orderDto.getOrderId(), orderDto.getTotalPrice(), orderDto.getDeliveryPrice());
+        BigDecimal totalPrice = orderDto.getTotalPrice();
+        BigDecimal deliveryPrice = orderDto.getDeliveryPrice();
         Payment payment = Payment.builder()
             .paymentId(orderDto.getPaymentId())
-            .totalPayment(orderDto.getTotalPrice())
-            .deliveryTotal(orderDto.getDeliveryPrice())
-            .feeTotal(calculateTax(orderDto.getTotalPrice()))
+            .totalPayment(totalPrice)
+            .deliveryTotal(deliveryPrice)
+            .feeTotal(calculateTax(totalPrice))
             .state(PaymentState.PENDING)
             .build();
         Payment savedPayment = paymentRepository.save(payment);
@@ -45,8 +48,10 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public double calculateTotalCost(OrderDto orderDto) {
-        double totalCost = calculateTax(orderDto.getTotalPrice()) + orderDto.getDeliveryPrice();
+    public BigDecimal calculateTotalCost(OrderDto orderDto) {
+        BigDecimal totalPrice = orderDto.getTotalPrice();
+        BigDecimal deliveryPrice = orderDto.getDeliveryPrice();
+        BigDecimal totalCost = calculateTax(totalPrice).add(deliveryPrice);
         log.debug("Рассчитана итоговая стоимость заказа orderId={}: {}", orderDto.getOrderId(), totalCost);
         return totalCost;
     }
@@ -64,16 +69,16 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public double calculateProductCost(OrderDto orderDto) {
+    public BigDecimal calculateProductCost(OrderDto orderDto) {
         log.debug("Расчёт стоимости товаров для заказа orderId={}", orderDto.getOrderId());
-        double productsCost = 0;
+        BigDecimal productsCost = BigDecimal.ZERO;
         Map<UUID, Integer> products = orderDto.getProducts();
 
         for (Map.Entry<UUID, Integer> entry : products.entrySet()) {
-            double price = shoppingStoreClient.getProduct(entry.getKey()).getPrice();
-            double quantity = entry.getValue();
-            double cost = price * quantity;
-            productsCost += cost;
+            BigDecimal price = shoppingStoreClient.getProduct(entry.getKey()).getPrice();
+            BigDecimal quantity = BigDecimal.valueOf(entry.getValue());
+            BigDecimal cost = price.multiply(quantity);
+            productsCost = productsCost.add(cost);
             log.trace("Товар productId={}, цена={}, количество={}, стоимость={}",
                 entry.getKey(), price, quantity, cost);
         }
@@ -92,8 +97,8 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("Платёж для заказа orderId={} помечен как FAILED", orderId);
     }
 
-    double calculateTax(double totalPrice) {
-        double result = totalPrice + totalPrice * 0.1;
+    private BigDecimal calculateTax(BigDecimal totalPrice) {
+        BigDecimal result = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(0.1)));
         log.trace("Рассчитан НДС: исходная сумма={}, с налогом={}", totalPrice, result);
         return result;
     }

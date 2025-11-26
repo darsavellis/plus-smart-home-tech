@@ -1,10 +1,14 @@
 package ru.yandex.practicum.order.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.dto.order.OrderState;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -51,13 +55,13 @@ public class Order {
     @Column(name = "fragile")
     boolean fragile;
 
-    @Column(name = "total_price")
-    double totalPrice;
+    @Column(name = "total_price", precision = 19, scale = 2)
+    BigDecimal totalPrice;
 
-    @Column(name = "delivery_price")
-    double deliveryPrice;
+    @Column(name = "delivery_price", precision = 19, scale = 2)
+    BigDecimal deliveryPrice;
 
-    @Column(name = "product_price")
-    double productPrice;
+    @Column(name = "product_price", precision = 19, scale = 2)
+    BigDecimal productPrice;
 }
 

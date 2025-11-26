@@ -2,14 +2,13 @@ package ru.yandex.practicum.dto.store;
 
 
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductDto {
     UUID productId;
@@ -19,5 +18,5 @@ public class ProductDto {
     QuantityState quantityState;
     ProductState productState;
     ProductCategory productCategory;
-    Double price;
+    BigDecimal price;
 }

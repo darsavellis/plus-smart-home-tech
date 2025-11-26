@@ -18,6 +18,7 @@ import ru.yandex.practicum.dto.delivery.DeliveryState;
 import ru.yandex.practicum.dto.order.OrderDto;
 import ru.yandex.practicum.dto.warehouse.AddressDto;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Slf4j
@@ -31,11 +32,11 @@ public class DeliveryServiceImpl implements DeliveryService {
     final OrderClient orderClient;
     final WarehouseClient warehouseClient;
 
-    static final double BASERATE = 5;
-    static final double FRAGILE_SURCHARGE_RATE = 0.2;
-    static final double WEIGHT_RATE = 0.3;
-    static final double VOLUME_RATE = 0.2;
-    static final double STREET_SURCHARGE_RATE = 0.2;
+    static final BigDecimal BASERATE = BigDecimal.valueOf(5);
+    static final BigDecimal FRAGILE_SURCHARGE_RATE = BigDecimal.valueOf(0.2);
+    static final BigDecimal WEIGHT_RATE = BigDecimal.valueOf(0.3);
+    static final BigDecimal VOLUME_RATE = BigDecimal.valueOf(0.2);
+    static final BigDecimal STREET_SURCHARGE_RATE = BigDecimal.valueOf(0.2);
     static final String ADDRESS1 = "ADDRESS_1";
     static final String ADDRESS2 = "ADDRESS_2";
     static final String MESSAGE_DELIVERY_NOT_FOUND = "Доставка не найдена.";
@@ -76,7 +77,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional(readOnly = true)
-    public double calculateDeliveryCost(OrderDto orderDto) {
+    public BigDecimal calculateDeliveryCost(OrderDto orderDto) {
         if (orderDto == null) {
             throw new IllegalArgumentException("Order DTO не может быть null");
         }
@@ -87,18 +88,53 @@ public class DeliveryServiceImpl implements DeliveryService {
         AddressDto warehouseAddress = warehouseClient.getWarehouseAddress();
         validateWarehouseAddress(warehouseAddress);
 
-        double baseAddressCost = calculateAddressCost(warehouseAddress.getCity());
-        double baseCost = BASERATE + baseAddressCost;
+        BigDecimal baseAddressCost = calculateAddressCost(warehouseAddress.getCity());
+        BigDecimal baseCost = BASERATE.add(baseAddressCost);
 
-        double fragileCharge = calculateFragileCharge(orderDto, baseCost);
-        double weightCharge = calculateWeightCharge(orderDto);
-        double volumeCharge = calculateVolumeCharge(orderDto);
-        double streetCharge = calculateStreetCharge(warehouseAddress, delivery, baseCost, fragileCharge);
+        BigDecimal fragileCharge = calculateFragileCharge(orderDto, baseCost);
+        BigDecimal weightCharge = calculateWeightCharge(orderDto);
+        BigDecimal volumeCharge = calculateVolumeCharge(orderDto);
+        BigDecimal streetCharge = calculateStreetCharge(warehouseAddress, delivery, baseCost, fragileCharge);
 
-        double totalDeliveryCost = baseCost + fragileCharge + weightCharge + volumeCharge + streetCharge;
+        BigDecimal totalDeliveryCost = baseCost.add(fragileCharge).add(weightCharge).add(volumeCharge).add(streetCharge);
         log.debug("Рассчитана стоимость доставки для заказа {}: {}", orderDto.getOrderId(), totalDeliveryCost);
 
         return totalDeliveryCost;
+    }
+
+    private BigDecimal calculateFragileCharge(OrderDto orderDto, BigDecimal baseCost) {
+        return orderDto.isFragile() ? baseCost.multiply(FRAGILE_SURCHARGE_RATE) : BigDecimal.ZERO;
+    }
+
+    private BigDecimal calculateWeightCharge(OrderDto orderDto) {
+        return BigDecimal.valueOf(orderDto.getDeliveryWeight()).multiply(WEIGHT_RATE);
+    }
+
+    private BigDecimal calculateVolumeCharge(OrderDto orderDto) {
+        return BigDecimal.valueOf(orderDto.getDeliveryVolume()).multiply(VOLUME_RATE);
+    }
+
+    private BigDecimal calculateStreetCharge(AddressDto warehouseAddress,
+                                             Delivery delivery,
+                                             BigDecimal baseCost,
+                                             BigDecimal fragileCharge) {
+        return isStreetSurchargeApplicable(warehouseAddress, delivery)
+            ? baseCost.add(fragileCharge).multiply(STREET_SURCHARGE_RATE)
+            : BigDecimal.ZERO;
+    }
+
+    private BigDecimal calculateAddressCost(String city) {
+        return switch (city) {
+            case ADDRESS1 -> BASERATE;
+            case ADDRESS2 -> BASERATE.multiply(BigDecimal.valueOf(2.0));
+            default -> throw new IllegalStateException(String.format("Unexpected city value: %s", city));
+        };
+    }
+
+    private boolean isStreetSurchargeApplicable(AddressDto warehouseAddress, Delivery delivery) {
+        return warehouseAddress.getStreet() != null &&
+            delivery.getToAddress() != null &&
+            !warehouseAddress.getStreet().equals(delivery.getToAddress().getStreet());
     }
 
     private void validateWarehouseAddress(AddressDto warehouseAddress) {
@@ -108,40 +144,5 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (warehouseAddress.getCity() == null) {
             throw new IllegalStateException("Город склада не может быть null");
         }
-    }
-
-    private double calculateFragileCharge(OrderDto orderDto, double baseCost) {
-        return orderDto.isFragile() ? baseCost * FRAGILE_SURCHARGE_RATE : 0;
-    }
-
-    private double calculateWeightCharge(OrderDto orderDto) {
-        return orderDto.getDeliveryWeight() * WEIGHT_RATE;
-    }
-
-    private double calculateVolumeCharge(OrderDto orderDto) {
-        return orderDto.getDeliveryVolume() * VOLUME_RATE;
-    }
-
-    private double calculateStreetCharge(AddressDto warehouseAddress,
-                                         Delivery delivery,
-                                         double baseCost,
-                                         double fragileCharge) {
-        return isStreetSurchargeApplicable(warehouseAddress, delivery)
-            ? (baseCost + fragileCharge) * STREET_SURCHARGE_RATE
-            : 0;
-    }
-
-    private double calculateAddressCost(String city) {
-        return switch (city) {
-            case ADDRESS1 -> BASERATE;
-            case ADDRESS2 -> BASERATE * 2.0;
-            default -> throw new IllegalStateException(String.format("Unexpected city value: %s", city));
-        };
-    }
-
-    private boolean isStreetSurchargeApplicable(AddressDto warehouseAddress, Delivery delivery) {
-        return warehouseAddress.getStreet() != null &&
-               delivery.getToAddress() != null &&
-               !warehouseAddress.getStreet().equals(delivery.getToAddress().getStreet());
     }
 }

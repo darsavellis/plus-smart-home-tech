@@ -18,8 +18,8 @@ public class DeviceRemovedEventHandler extends BaseHubEventHandler<DeviceRemoved
     @Override
     public DeviceRemovedEventAvro mapToAvro(HubEventProto hubEvent) {
         return DeviceRemovedEventAvro.newBuilder()
-                .setId(hubEvent.getDeviceRemoved().getId())
-                .build();
+            .setId(hubEvent.getDeviceRemoved().getId())
+            .build();
     }
 
     @Override
