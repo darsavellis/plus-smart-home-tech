@@ -28,7 +28,7 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
 
     public Page<ProductDto> getProducts(ProductCategory category, Pageable pageable) {
         log.info("Запрос на получение списка продуктов категории: {}, страница: {}, размер: {}",
-                category, pageable.getPageNumber(), pageable.getPageSize());
+            category, pageable.getPageNumber(), pageable.getPageSize());
         Page<ProductDto> productPage = productRepository.findAllByProductCategory(category, pageable).map(ProductMapper::toProductDto);
         log.info("Найдено {} продуктов категории {}", productPage.getTotalElements(), category);
         log.debug("Список продуктов: {}", productPage.getContent());
@@ -39,10 +39,10 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     public ProductDto getProduct(UUID productId) {
         log.info("Запрос на получение продукта с ID: {}", productId);
         Product foundProduct = productRepository.findById(productId)
-                .orElseThrow(() -> {
-                    log.warn("Продукт с ID {} не найден", productId);
-                    return new NotFoundException("Product with %id doesn't exist");
-                });
+            .orElseThrow(() -> {
+                log.warn("Продукт с ID {} не найден", productId);
+                return new NotFoundException("Product with %id doesn't exist");
+            });
         log.debug("Найден продукт: {}", foundProduct);
         return ProductMapper.toProductDto(foundProduct);
     }
@@ -61,10 +61,10 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
         log.debug("Данные для обновления: {}", updatedProductDto);
 
         Product existingProduct = productRepository.findById(updatedProductDto.getProductId())
-                .orElseThrow(() -> {
-                    log.warn("Продукт с ID {} не найден для обновления", updatedProductDto.getProductId());
-                    return new NotFoundException("Product with %id doesn't exist");
-                });
+            .orElseThrow(() -> {
+                log.warn("Продукт с ID {} не найден для обновления", updatedProductDto.getProductId());
+                return new NotFoundException("Product with %id doesn't exist");
+            });
 
         log.debug("Текущее состояние продукта перед обновлением: {}", existingProduct);
 
@@ -87,10 +87,10 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
         log.info("Запрос на удаление продукта с ID: {}", productId);
 
         Product productToDeactivate = productRepository.findById(productId)
-                .orElseThrow(() -> {
-                    log.warn("Продукт с ID {} не найден для удаления", productId);
-                    return new NotFoundException("Product with ID " + productId + " doesn't exist");
-                });
+            .orElseThrow(() -> {
+                log.warn("Продукт с ID {} не найден для удаления", productId);
+                return new NotFoundException("Product with ID " + productId + " doesn't exist");
+            });
 
         log.debug("Найден продукт для удаления: {}", productToDeactivate);
 
@@ -106,13 +106,13 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     public ProductDto setQuantityState(SetProductQuantityStateRequest quantityUpdateRequest) {
         UUID productId = quantityUpdateRequest.getProductId();
         log.info("Запрос на изменение состояния количества продукта с ID: {}. Новое состояние: {}",
-                productId, quantityUpdateRequest.getQuantityState());
+            productId, quantityUpdateRequest.getQuantityState());
 
         Product targetProduct = productRepository.findById(productId)
-                .orElseThrow(() -> {
-                    log.warn("Продукт с ID {} не найден для изменения состояния количества", productId);
-                    return new NotFoundException("Product with ID " + productId + " doesn't exist");
-                });
+            .orElseThrow(() -> {
+                log.warn("Продукт с ID {} не найден для изменения состояния количества", productId);
+                return new NotFoundException("Product with ID " + productId + " doesn't exist");
+            });
 
         log.debug("Текущее состояние количества: {}", targetProduct.getQuantityState());
         targetProduct.setQuantityState(quantityUpdateRequest.getQuantityState());

@@ -9,6 +9,7 @@ import ru.yandex.practicum.dto.store.ProductCategory;
 import ru.yandex.practicum.dto.store.ProductState;
 import ru.yandex.practicum.dto.store.QuantityState;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -43,6 +44,6 @@ public class Product {
     @Enumerated(EnumType.STRING)
     ProductCategory productCategory;
 
-    @Column(name = "price")
-    Double price;
+    @Column(name = "price", precision = 19, scale = 2)
+    BigDecimal price;
 }

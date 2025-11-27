@@ -9,27 +9,27 @@ public enum ConditionOperation implements Operation {
         @Override
         public boolean apply(Integer left, Integer right) {
             return Optional.ofNullable(left)
-                    .flatMap(l -> Optional.ofNullable(right)
-                            .map(r -> l.compareTo(r) == 0))
-                    .orElse(false);
+                .flatMap(l -> Optional.ofNullable(right)
+                    .map(r -> l.compareTo(r) == 0))
+                .orElse(false);
         }
     },
     GREATER_THAN {
         @Override
         public boolean apply(Integer left, Integer right) {
             return Optional.ofNullable(left)
-                    .flatMap(l -> Optional.ofNullable(right)
-                            .map(r -> l.compareTo(r) > 0))
-                    .orElse(false);
+                .flatMap(l -> Optional.ofNullable(right)
+                    .map(r -> l.compareTo(r) > 0))
+                .orElse(false);
         }
     },
     LOWER_THAN {
         @Override
         public boolean apply(Integer left, Integer right) {
             return Optional.ofNullable(left)
-                    .flatMap(l -> Optional.ofNullable(right)
-                            .map(r -> l.compareTo(r) < 0))
-                    .orElse(false);
+                .flatMap(l -> Optional.ofNullable(right)
+                    .map(r -> l.compareTo(r) < 0))
+                .orElse(false);
         }
     };
 
